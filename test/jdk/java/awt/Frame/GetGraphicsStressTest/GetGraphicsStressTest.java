@@ -47,13 +47,13 @@ public final class GetGraphicsStressTest {
         f.setSize(100, 100);
         f.setLocationRelativeTo(null);
         f.setVisible(true);
+        f.dispose();
 
         while (!isComplete()) {
             f.removeNotify();
             f.addNotify();
             }
 
-        f.dispose();
         if (failed != null) {
             System.err.println("Test failed");
             failed.printStackTrace();
