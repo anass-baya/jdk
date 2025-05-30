@@ -299,6 +299,9 @@ final class XFileDialogPeer extends XDialogPeer
         pathChoice.addItemListener(this);
         pathField.addActionListener(this);
 
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                 .addKeyEventDispatcher(this);
+
         // b6227750 FileDialog is not disposed when clicking the 'close' (X) button on the top right corner, XToolkit
         target.addWindowListener(
             new WindowAdapter(){
@@ -783,41 +786,6 @@ final class XFileDialogPeer extends XDialogPeer
             fd.removeAll();
         }
         super.dispose();
-    }
-
-    // 03/02/2005 b5097243 Pressing 'ESC' on a file dlg does not dispose the dlg on Xtoolkit
-    @Override
-    public void setVisible(boolean b){
-        if (fileDialog == null) {
-            init(target);
-        }
-
-        if (savedDir != null || userDir != null) {
-            setDirectory(savedDir != null ? savedDir : userDir);
-        }
-
-        if (savedFile != null) {
-            // Actually in Motif implementation lost file value which was saved after previously showing
-            // Seems we shouldn't restore Motif behaviour in this case
-            setFile(savedFile);
-        }
-
-        super.setVisible(b);
-        XChoicePeer choicePeer = AWTAccessor.getComponentAccessor()
-                                            .getPeer(pathChoice);
-        if (b == true){
-            // See 6240074 for more information
-            choicePeer.addXChoicePeerListener(this);
-            KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                                .addKeyEventDispatcher(this);
-        }else{
-            // See 6240074 for more information
-            choicePeer.removeXChoicePeerListener();
-            KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                                .removeKeyEventDispatcher(this);
-        }
-
-        selectionField.requestFocusInWindow();
     }
 
     /*
